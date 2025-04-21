@@ -2,14 +2,19 @@ import express from 'express';
 import usersRoutes from './routes/UserRoutes.js';
 //import reportsRoutes from './routes/ReportRoutes.js';
 //import orgsRoutes from './routes/OrgRoutes.js';
-import mongoConnect from './db.js';
+import mongoConnect from './utils/db.js';
 import dotenv from 'dotenv';
+import cookieParser from 'cookie-parser';
+
+
 dotenv.config();
 
 
 const PORT = process.env.PORT
 const app = express();
 app.use(express.json());
+app.use(cookieParser());
+
 
 mongoConnect();
 
