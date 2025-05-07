@@ -5,6 +5,8 @@ import usersRoutes from './routes/UserRoutes.js';
 import mongoConnect from './utils/db.js';
 import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
+import cors from 'cors';
+
 
 
 dotenv.config();
@@ -15,6 +17,11 @@ const app = express();
 app.use(express.json());
 app.use(cookieParser());
 
+
+app.use(cors({
+  origin: 'http://localhost:8080', // allow your frontend
+  credentials: true // if you're using cookies or auth headers
+}));
 
 mongoConnect();
 
