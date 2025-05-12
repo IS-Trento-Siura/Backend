@@ -8,11 +8,11 @@ const router = express.Router();
 
 router.post("/user", register);
 router.post("/session", login);
-router.post("/logout", authMiddleware, logout); //SOLO COME PROVA PER POSTMAN
+router.post("/logout", authMiddleware, logout); //Just to try postman
 router.delete("/user/:id", authMiddleware, deleteUser);
 
 
-router.get("/protected", authMiddleware, (req, res) => { //just to test auth
+router.get("/protected", authMiddleware, (req, res) => { //Just to test auth
     res.status(200).json({ message: `Welcome, ${req.user.username}` });
   });
 

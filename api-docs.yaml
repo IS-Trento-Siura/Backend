@@ -1,109 +1,184 @@
 openapi: 3.0.0
 info:
-  title: API TrentoSicura
-  description: API to manage TrentoSicura webApp
+  title: User & Report Management API
   version: 1.0.0
+  description: API per registrazione utente, login/logout e gestione delle segnalazioni
 
 servers:
-  - url: 'http://localhost:8080'
-
-paths:
-  /users/register:
-    post:
-      summary: Register a new user
-      requestBody:
-        description: User registration details
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                username:
-                  type: string
-                password:
-                  type: string
-              required:
-                - email
-                - username
-                - password
-      responses:
-        '201':
-          description: User registered successfully
-        '400':
-          description: Invalid input or user already exists
-        '500':
-          description: Server error
-
-  /users/login:
-    post:
-      summary: Login an existing user
-      requestBody:
-        description: User login credentials
-        content:
-          application/json:
-            schema:
-              type: object
-              properties:
-                email:
-                  type: string
-                  format: email
-                password:
-                  type: string
-              required:
-                - email
-                - password
-      responses:
-        '200':
-          description: Successfully logged in
-        '400':
-          description: Invalid email or password
-        '500':
-          description: Server error
-
-  /users/logout:
-    post:
-      summary: Logout the logged-in user
-      responses:
-        '200':
-          description: Successfully logged out
-        '500':
-          description: Server error
-
-  /users/delete/{id}:
-    delete:
-      summary: Delete a user account
-      description: Delete the account of the logged-in user.
-      parameters:
-        - name: id
-          in: path
-          required: true
-          description: The user ID to delete
-          schema:
-            type: string
-      security:
-        - jwtAuth: []
-      responses:
-        '200':
-          description: User deleted successfully
-        '403':
-          description: You cannot delete another user's account
-        '404':
-          description: User not found
-        '500':
-          description: Server error
+  - url: http://localhost:3000/api
 
 components:
   securitySchemes:
-    jwtAuth:
+    bearerAuth:
       type: http
       scheme: bearer
       bearerFormat: JWT
 
-  responses:
-    Unauthorized:
-      description: Unauthorized access
-    NotFound:
-      description: Resource not found
+  schemas:
+    User:
+      type: object
+      properties:
+        _id:
+          type: string
+        email:
+          type: string
+        username:
+          type: string
+
+    Report:
+      type: object
+      properties:
+        _id:
+          type: string
+        title:
+          type: string
+        description:
+          type: string
+        tags:
+          type: array
+          items:
+            type: string
+        userId:
+          type: string
+        createdAt:
+          type: string
+          format: date-time
+
+paths:
+
+  /user:
+    post:
+      summary: Registra un nuovo utente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                username: { type: string }
+                password: { type: string }
+      responses:
+        201:
+          description: Utente registrato
+        400:
+          description: Dati non validi
+
+  /session:
+    post:
+      summary: Login utente
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email: { type: string }
+                password: { type: string }
+      responses:
+        200:
+          description: Login effettuato con successo
+        400:
+          description: Credenziali errate
+
+  /logout:
+    post:
+      summary: Logout dell'utente autenticato
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Logout effettuato
+
+  /user/{id}:
+    delete:
+      summary: Elimina il proprio account
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: id
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Account eliminato
+        403:
+          description: Non autorizzato
+        404:
+          description: Utente non trovato
+
+  /protected:
+    get:
+      summary: Route di test per autenticazione
+      security:
+        - bearerAuth: []
+      responses:
+        200:
+          description: Accesso riuscito all'area protetta
+
+  /report:
+    post:
+      summary: Crea una nuova segnalazione
+      security:
+        - bearerAuth: []
+      requestBody:
+        required: true
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                userId: { type: string }
+                reportData:
+                  type: object
+                  properties:
+                    title: { type: string }
+                    description: { type: string }
+                    tags:
+                      type: array
+                      items:
+                        type: string
+      responses:
+        201:
+          description: Segnalazione creata
+
+  /report/{reportId}:
+    get:
+      summary: Ottiene una segnalazione specifica
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Segnalazione trovata
+        404:
+          description: Segnalazione non trovata
+
+    delete:
+      summary: Elimina una segnalazione
+      security:
+        - bearerAuth: []
+      parameters:
+        - name: reportId
+          in: path
+          required: true
+          schema: { type: string }
+      responses:
+        200:
+          description: Segnalazione eliminata
+        404:
+          description: Segnalazione non trovata
+
+  /reports:
+    get:
+      summary: Ottiene tutte le segnalazioni
+      responses:
+        200:
+          description: Elenco delle segnalazioni
