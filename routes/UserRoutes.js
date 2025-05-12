@@ -6,10 +6,10 @@ import { authMiddleware } from "../middleware/middleware.js";
 
 const router = express.Router();
 
-router.post("/register", register);
-router.post("/login", login);
-router.post("/logout", authMiddleware, logout);
-router.delete("/delete/:id", authMiddleware, deleteUser);
+router.post("/user", register);
+router.post("/session", login);
+router.post("/logout", authMiddleware, logout); //SOLO COME PROVA PER POSTMAN
+router.delete("/user/:id", authMiddleware, deleteUser);
 
 
 router.get("/protected", authMiddleware, (req, res) => { //just to test auth

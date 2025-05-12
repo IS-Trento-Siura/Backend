@@ -89,3 +89,19 @@ export const deleteUser = async (req, res) => {
     return res.status(500).json({ message: 'Server error', error });
   }
 };
+
+export const getUserReports = async (req, res) => {
+  try {
+    const { userId } = req.params;
+
+    const reports = await Report.find({ userId });
+    if (!reports) {
+      return res.status(404).json({ message: 'No reports found for this user' });
+    }
+
+    return res.status(200).json(reports);
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error });
+  }
+};
+
