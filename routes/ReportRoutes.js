@@ -5,9 +5,10 @@ import { authMiddleware } from "../middleware/middleware.js";
 
 
 const router = express.Router();
+
 router.post("/report", authMiddleware, createReport);
-router.delete("/report/:reportId", authMiddleware, deleteReport); 
-router.get("/report/:reportId", authMiddleware, getReport);
+router.delete("/:reportId", authMiddleware, deleteReport); 
+router.get("/:reportId", authMiddleware, getReport);
 router.get("/reports", getAllReports); 
 
 
