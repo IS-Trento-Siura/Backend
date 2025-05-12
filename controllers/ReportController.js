@@ -35,3 +35,32 @@ export const deleteReport = async (req, res) => {
     return res.status(500).json({ message: 'Server error', error });
   }
 };
+
+export const getReport = async (req, res) => {
+  try {
+    const { reportId } = req.params;
+
+    const report = await Report.findById(reportId);
+    if (!report) {
+      return res.status(404).json({ message: 'Report not found' });
+    }
+
+    return res.status(200).json(report);
+  } catch (error) {
+    return res.status(500).json({ message: 'Server error', error });
+  }
+};  
+
+export const getAllReports = async (req, res) => {
+    try {   
+      const reports = await Report.find();
+      if (!reports) {
+        return res.status(404).json({ message: 'No reports found' });
+      }
+  
+      return res.status(200).json(reports);
+    } catch (error) {
+      return res.status(500).json({ message: 'Server error', error });
+    }
+  };
+

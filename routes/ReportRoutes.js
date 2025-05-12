@@ -1,10 +1,15 @@
 import express from "express";
-import {createReport, deleteReport} from "../controllers/ReportController.js";
+import {createReport, deleteReport, getReport, getAllReports} from "../controllers/ReportController.js";
+import { authMiddleware } from "../middleware/middleware.js"; 
+
 
 
 const router = express.Router();
-router.post("/report", createReport);
-router.delete("/report/:reportId", deleteReport); //SOLO COME PROVA PER POSTMAN
+router.post("/report", authMiddleware, createReport);
+router.delete("/report/:reportId", authMiddleware, deleteReport); 
+router.get("/report/:reportId", authMiddleware, getReport);
+router.get("/reports", getAllReports); 
+
 
 
 export default router;
