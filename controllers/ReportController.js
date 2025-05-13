@@ -1,6 +1,5 @@
 import User from '../models/UserModel.js';
 import Report from '../models/ReportModel.js';
-import e from 'express';
 
 
 export const createReport = async (req, res) => {

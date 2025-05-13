@@ -1,5 +1,5 @@
 import express from "express";
-import {register, login, logout, deleteUser} from "../controllers/UserController.js";
+import {register, login, logout, deleteUser, editUser} from "../controllers/UserController.js";
 import { authMiddleware } from "../middleware/middleware.js"; 
 
 
@@ -10,6 +10,7 @@ router.post("/user", register);
 router.post("/session", login);
 router.post("/logout", authMiddleware, logout); //Just to try postman
 router.delete("/user/:id", authMiddleware, deleteUser);
+router.put("/user/:id", authMiddleware, editUser);
 
 
 router.get("/protected", authMiddleware, (req, res) => { //Just to test auth

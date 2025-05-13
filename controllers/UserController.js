@@ -1,5 +1,5 @@
 import User from '../models/UserModel.js';
-import Report from '../models/ReportModel.js';
+// import Report from '../models/ReportModel.js';
 
 export const register = async (req, res) => {
     try {
@@ -90,18 +90,29 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-export const getUserReports = async (req, res) => {
+export const editUser = async (req, res) => { //come passo i parametri? prendo diretto da cookie o come parte della richiesta?
   try {
-    const { userId } = req.params;
+    const { id } = req.params;  
+    const loggedInUserId = req.user._id.toString();
+    const { email, username, password } = req.body;
 
-    const reports = await Report.find({ userId });
-    if (!reports) {
-      return res.status(404).json({ message: 'No reports found for this user' });
+    if (id !== loggedInUserId) {
+      return res.status(403).json({ message: "You cannot edit another user's account." });
     }
 
-    return res.status(200).json(reports);
+    const user = await User.findById(id);
+    if (!user) {
+      return res.status(404).json({ message: 'User not found' });
+    }
+
+    if (email) user.email = email;
+    if (username) user.username = username;
+    if (password) user.password = password;
+
+    await user.save();
+
+    return res.status(200).json({ message: 'User updated successfully', user });
   } catch (error) {
     return res.status(500).json({ message: 'Server error', error });
   }
 };
-
