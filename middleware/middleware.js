@@ -9,7 +9,13 @@ export const authMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    req.user = decoded; 
+    // req.user = decoded; 
+    req.user = {
+      id: decoded._id,
+      email: decoded.email,
+      username: decoded.username,
+      role: decoded.role,
+    };
     next();
   } catch (err) {
     return res.status(403).json({ message: 'Invalid or expired token' });
@@ -17,8 +23,8 @@ export const authMiddleware = (req, res, next) => {
 };
 
 
-export const requireAdmin = (req, res, next) => {
-  if (req.user?.role !== 'admin') {
+export const requireOrg = (req, res, next) => {
+  if (req.user?.role !== 'org') { //checks for org types?
     return res.status(403).json({ error: 'Access denied: admin only' });
   }
   next();

@@ -1,5 +1,6 @@
 import mongoose from 'mongoose';
 import bcrypt from 'bcryptjs';
+import jwt from 'jsonwebtoken';
 const collection = 'Orgs'; 
 
 const OrgSchema = new mongoose.Schema({
@@ -30,7 +31,7 @@ OrgSchema.methods.comparePassword = async function (candidatePassword) {
 
 
 OrgSchema.methods.generateAuthToken = function () {
-    const payload = { _id: this._id, email: this.email, username: this.username};
+    const payload = { _id: this._id, email: this.email, username: this.username, role: 'org' };
   
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h'});
   

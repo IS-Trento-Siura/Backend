@@ -1,14 +1,27 @@
 import User from '../models/UserModel.js';
 import Report from '../models/ReportModel.js';
+import Org from '../models/OrgModel.js';
 
 
 export const createReport = async (req, res) => {
   try {
     const { reportData } = req.body;
-    const userId = req.user.id;
+    const { id: userId, role } = req.user;
 
-    const newReport = new Report({ userId, ...reportData });
+    const newReport = new Report({ user: userId, ...reportData });
     await newReport.save();
+
+    const Model = role === 'org' ? Org : User;
+
+    const updated = await Model.findByIdAndUpdate(
+      userId,
+      { $push: { segnalazioni: newReport._id } },
+      { new: true }
+    );
+
+    if (!updated) {
+      return res.status(404).json({ message: `${role} not found` });
+    }
 
     return res.status(201).json({ message: 'Report created successfully', report: newReport });
   } catch (error) {
@@ -84,7 +97,7 @@ export const getUserReports = async (req, res) => {
   try {
     const userId = req.user.id;
 
-    const reports = await Report.find({ userId });
+    const reports = await Report.find({ user: userId });
     if (!reports) {
       return res.status(404).json({ message: 'No reports found for this user' });
     }

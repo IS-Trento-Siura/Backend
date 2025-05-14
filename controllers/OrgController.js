@@ -1,11 +1,11 @@
-// import User from '../models/UserModel.js';
-// import Report from '../models/ReportModel.js';
+import User from '../models/UserModel.js';
+import Report from '../models/ReportModel.js';
 import Org from '../models/OrgModel.js';
 
 
 export const register = async (req, res) => {
     try {
-      const { email, username, password, phone, indirizzo } = req.body;
+      const { username, email, password, phone, indirizzo } = req.body;
   
       console.log('Received:', { email, username, password, phone, indirizzo });
   
@@ -26,8 +26,9 @@ export const register = async (req, res) => {
   
       return res.status(201).json({ message: 'User registered successfully' });
     } catch (error) {
-      return res.status(500).json({ message: 'Server error', error });
-    }
+    console.error('Registration error:', error); 
+    return res.status(500).json({ message: 'Server error', error: error.message || error });
+}
 };
 
 export const login = async (req, res) => {
@@ -55,6 +56,19 @@ export const login = async (req, res) => {
 
     return res.status(200).json({ message: 'Logged in successfully', org });
   } catch (error) {
+    console.error('Login error:', error);
     return res.status(500).json({ message: 'Server error', error });
+  }
+};
+
+
+export const getAllUsers = async (req, res) => {
+  try {
+    const users = await User.find({}, '-password'); // Exclude password field
+
+    return res.status(200).json({ users });
+  } catch (error) {
+    console.error('Login error:', error);
+    return res.status(500).json({ message: 'Failed to fetch users', error });
   }
 };
