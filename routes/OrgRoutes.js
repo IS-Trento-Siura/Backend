@@ -7,9 +7,9 @@ import { authMiddleware, requireOrg} from "../middleware/middleware.js";
 const router = express.Router();
 
 
-router.post("/admin", register);
+router.post("", register);
 router.post("/session", login);
-router.get("/users", authMiddleware, requireOrg, getAllUsers);
+router.get("", authMiddleware, requireOrg, getAllUsers);
 
 
 

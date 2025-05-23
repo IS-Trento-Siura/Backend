@@ -6,11 +6,11 @@ import { authMiddleware } from "../middleware/middleware.js";
 
 const router = express.Router();
 
-router.post("/report", authMiddleware, createReport);       // crete report
+router.post("", authMiddleware, createReport);       // crete report
 router.delete("/:reportId", authMiddleware, deleteReport);  // delete report
-router.get("/reports", getAllReports);                      // get all reports
+router.get("", getAllReports);                      // get all reports
 router.patch("/:reportId", authMiddleware, updateReport);   // update report
-router.get("/mine", authMiddleware, getUserReports);        // get user reports
+router.get("/mine", authMiddleware, getUserReports);        // get user reports api/reports?userId = ...
 router.get("/:reportId", authMiddleware, getReport);        // get report by id
 
 
