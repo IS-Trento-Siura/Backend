@@ -1,184 +1,300 @@
 openapi: 3.0.0
 info:
-  title: User & Report Management API
-  version: 1.0.0
-  description: API per registrazione utente, login/logout e gestione delle segnalazioni
-
+  title: User, Org & Report API
+  version: 1.1.0
+  description: API for managing users, organizations, and reports.
 servers:
   - url: http://localhost:3000/api
+    description: Local development server
 
-components:
-  securitySchemes:
-    bearerAuth:
-      type: http
-      scheme: bearer
-      bearerFormat: JWT
-
-  schemas:
-    User:
-      type: object
-      properties:
-        _id:
-          type: string
-        email:
-          type: string
-        username:
-          type: string
-
-    Report:
-      type: object
-      properties:
-        _id:
-          type: string
-        title:
-          type: string
-        description:
-          type: string
-        tags:
-          type: array
-          items:
-            type: string
-        userId:
-          type: string
-        createdAt:
-          type: string
-          format: date-time
+tags:
+  - name: Users
+  - name: Organizations
+  - name: Reports
 
 paths:
-
-  /user:
+  /users/register:
     post:
-      summary: Registra un nuovo utente
+      tags:
+        - Users
+      summary: Register a new user
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
+              required: [email, username, password]
               properties:
-                email: { type: string }
-                username: { type: string }
-                password: { type: string }
+                email:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
       responses:
         201:
-          description: Utente registrato
+          description: User registered successfully
         400:
-          description: Dati non validi
+          description: User already exists or invalid password
+        500:
+          description: Server error
 
-  /session:
+  /users/login:
     post:
-      summary: Login utente
+      tags:
+        - Users
+      summary: Login as a user
       requestBody:
         required: true
         content:
           application/json:
             schema:
               type: object
+              required: [email, password]
               properties:
-                email: { type: string }
-                password: { type: string }
+                email:
+                  type: string
+                password:
+                  type: string
       responses:
         200:
-          description: Login effettuato con successo
+          description: Logged in successfully
         400:
-          description: Credenziali errate
+          description: Invalid email or password
+        500:
+          description: Server error
 
-  /logout:
+  /users/logout:
     post:
-      summary: Logout dell'utente autenticato
-      security:
-        - bearerAuth: []
+      tags:
+        - Users
+      summary: Logout the user
       responses:
         200:
-          description: Logout effettuato
+          description: Logged out successfully
 
-  /user/{id}:
+  /users/{id}:
     delete:
-      summary: Elimina il proprio account
-      security:
-        - bearerAuth: []
+      tags:
+        - Users
+      summary: Delete a user
       parameters:
-        - name: id
-          in: path
+        - in: path
+          name: id
           required: true
-          schema: { type: string }
+          schema:
+            type: string
       responses:
         200:
-          description: Account eliminato
+          description: User deleted
         403:
-          description: Non autorizzato
+          description: Unauthorized
         404:
-          description: Utente non trovato
+          description: User not found
+        500:
+          description: Server error
 
-  /protected:
-    get:
-      summary: Route di test per autenticazione
-      security:
-        - bearerAuth: []
-      responses:
-        200:
-          description: Accesso riuscito all'area protetta
-
-  /report:
-    post:
-      summary: Crea una nuova segnalazione
-      security:
-        - bearerAuth: []
+    put:
+      tags:
+        - Users
+      summary: Edit a user
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
       requestBody:
-        required: true
         content:
           application/json:
             schema:
               type: object
               properties:
-                userId: { type: string }
-                reportData:
-                  type: object
-                  properties:
-                    title: { type: string }
-                    description: { type: string }
-                    tags:
-                      type: array
-                      items:
-                        type: string
+                email:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: User updated
+        403:
+          description: Unauthorized
+        404:
+          description: User not found
+        500:
+          description: Server error
+
+  /org/register:
+    post:
+      tags:
+        - Organizations
+      summary: Register an organization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [username, email, password, phone, indirizzo]
+              properties:
+                email:
+                  type: string
+                username:
+                  type: string
+                password:
+                  type: string
+                phone:
+                  type: string
+                indirizzo:
+                  type: string
       responses:
         201:
-          description: Segnalazione creata
+          description: Org registered
+        400:
+          description: Org already exists or invalid password
+        500:
+          description: Server error
 
-  /report/{reportId}:
+  /org/login:
+    post:
+      tags:
+        - Organizations
+      summary: Login an organization
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              required: [email, password]
+              properties:
+                email:
+                  type: string
+                password:
+                  type: string
+      responses:
+        200:
+          description: Logged in successfully
+        400:
+          description: Invalid credentials
+        500:
+          description: Server error
+
+  /org/users:
     get:
-      summary: Ottiene una segnalazione specifica
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: reportId
-          in: path
-          required: true
-          schema: { type: string }
+      tags:
+        - Organizations
+      summary: Get all users
       responses:
         200:
-          description: Segnalazione trovata
-        404:
-          description: Segnalazione non trovata
-
-    delete:
-      summary: Elimina una segnalazione
-      security:
-        - bearerAuth: []
-      parameters:
-        - name: reportId
-          in: path
-          required: true
-          schema: { type: string }
-      responses:
-        200:
-          description: Segnalazione eliminata
-        404:
-          description: Segnalazione non trovata
+          description: List of users
+        500:
+          description: Failed to fetch users
 
   /reports:
+    post:
+      tags:
+        - Reports
+      summary: Create a new report
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reportData:
+                  type: object
+      responses:
+        201:
+          description: Report created
+        500:
+          description: Server error
+
     get:
-      summary: Ottiene tutte le segnalazioni
+      tags:
+        - Reports
+      summary: Get all reports
       responses:
         200:
-          description: Elenco delle segnalazioni
+          description: List of reports
+        404:
+          description: No reports found
+        500:
+          description: Server error
+
+  /reports/user:
+    get:
+      tags:
+        - Reports
+      summary: Get all reports by current user/org
+      responses:
+        200:
+          description: List of user reports
+        404:
+          description: No reports found
+        500:
+          description: Server error
+
+  /reports/{reportId}:
+    get:
+      tags:
+        - Reports
+      summary: Get a single report by ID
+      parameters:
+        - in: path
+          name: reportId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Report found
+        404:
+          description: Report not found
+        500:
+          description: Server error
+
+    put:
+      tags:
+        - Reports
+      summary: Update a report
+      parameters:
+        - in: path
+          name: reportId
+          required: true
+          schema:
+            type: string
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                reportData:
+                  type: object
+      responses:
+        200:
+          description: Report updated
+        404:
+          description: Report not found
+        500:
+          description: Server error
+
+    delete:
+      tags:
+        - Reports
+      summary: Delete a report
+      parameters:
+        - in: path
+          name: reportId
+          required: true
+          schema:
+            type: string
+      responses:
+        200:
+          description: Report deleted
+        404:
+          description: Report not found
+        500:
+          description: Server error

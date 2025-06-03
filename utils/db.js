@@ -1,4 +1,4 @@
-import mongoose from 'mongoose';
+/*import mongoose from 'mongoose';
 import dotenv from 'dotenv';
 
 dotenv.config();
@@ -18,4 +18,37 @@ const mongoConnect = async () => {
     }
 }
 
-export default mongoConnect;
+export default mongoConnect;*/
+
+
+
+// utils/db.js
+import mongoose from 'mongoose';
+
+export const mongoConnect = async (uri = process.env.MONGO_URI) => {
+  try {
+    if (mongoose.connection.readyState === 1) {
+      // Already connected
+      console.log('MongoDB already connected');
+      return;
+    }
+    await mongoose.connect(uri, {
+      useNewUrlParser: true,
+      useUnifiedTopology: true,
+    });
+    console.log('MongoDB connected');
+  } catch (error) {
+    console.error('MongoDB connection error:', error);
+  }
+};
+
+export const mongoDisconnect = async () => {
+  try {
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect();
+      console.log('MongoDB disconnected');
+    }
+  } catch (error) {
+    console.error('MongoDB disconnection error:', error);
+  }
+};
