@@ -5,35 +5,45 @@ import User from '../models/UserModel.js';
 import Report from '../models/ReportModel.js';
 import { mongoConnect, mongoDisconnect } from '../utils/db.js';
 
-
 let token;
 let userId;
 
 describe('Report API', () => {
   beforeAll(async () => {
-  await mongoConnect(process.env.MONGO_URL || 'mongodb://localhost:27017/testdb');
+    await mongoConnect(process.env.MONGO_URL || 'mongodb://localhost:27017/testdb');
 
+    // Clean up any existing test data
+    await User.deleteMany({ email: 'report@test.com' });
+    await Report.deleteMany();
+
+    // Register user
     const res = await request(app).post('/api/users').send({
       email: 'report@test.com',
       username: 'reporter',
       password: 'Password1'
     });
 
+    // Login user
     const loginRes = await request(app).post('/api/users/session').send({
       email: 'report@test.com',
       password: 'Password1'
     });
 
+    // Extract token from cookie
     token = loginRes.headers['set-cookie'][0].split(';')[0].split('=')[1];
     const user = await User.findOne({ email: 'report@test.com' });
     userId = user._id;
   });
 
   afterAll(async () => {
+    // Clean up test data
+    await User.deleteMany({ email: 'report@test.com' });
+    await Report.deleteMany();
     await mongoDisconnect();
   });
 
   afterEach(async () => {
+    // Clean reports after each test but keep the user
     await Report.deleteMany();
   });
 
@@ -43,11 +53,13 @@ describe('Report API', () => {
       .set('Cookie', [`token=${token}`])
       .send({
         reportData: {
-          titolo: 'Test Report',
-          descrizione: 'Description here',
+          title: 'Test Report',        // Changed from 'titolo'
+          description: 'Description here', // Changed from 'descrizione'
         }
       });
     expect(res.statusCode).toBe(201);
+    expect(res.body).toHaveProperty('message', 'Report created successfully');
+    expect(res.body).toHaveProperty('report');
   });
 
   it('should get all reports (empty)', async () => {
@@ -57,7 +69,10 @@ describe('Report API', () => {
   });
 
   it('should return 404 for non-existing report', async () => {
-    const res = await request(app).get('/api/reports/64ac1234nn5678901234567890');
+    // Use a valid ObjectId format
+    const res = await request(app)
+      .get('/api/reports/64ac123456789012345678ab')
+      .set('Cookie', [`token=${token}`]); // Add authentication
     expect(res.statusCode).toBe(404);
   });
 });

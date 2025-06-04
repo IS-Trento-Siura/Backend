@@ -27,15 +27,18 @@ import mongoose from 'mongoose';
 
 export const mongoConnect = async (uri = process.env.MONGO_URI) => {
   try {
+    // Check if already connected to avoid multiple connections
     if (mongoose.connection.readyState === 1) {
-      // Already connected
       console.log('MongoDB already connected');
       return;
     }
-    await mongoose.connect(uri, {
-      useNewUrlParser: true,
-      useUnifiedTopology: true,
-    });
+    
+    // Disconnect if there's an existing connection with different URI
+    if (mongoose.connection.readyState !== 0) {
+      await mongoose.disconnect();
+    }
+    
+    await mongoose.connect(uri);
     console.log('MongoDB connected');
   } catch (error) {
     console.error('MongoDB connection error:', error);
