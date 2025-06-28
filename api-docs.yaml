@@ -137,28 +137,6 @@ paths:
                     type: string
                     example: "Logged out successfully"
 
-  /users/protected:
-    get:
-      tags:
-        - Users
-      summary: Test protected route
-      security:
-        - cookieAuth: []
-      responses:
-        200:
-          description: Access granted
-          content:
-            application/json:
-              schema:
-                type: object
-                properties:
-                  message:
-                    type: string
-                    example: "Welcome, username"
-        401:
-          description: No token provided
-        403:
-          description: Invalid or expired token
 
   /users/{id}:
     delete:

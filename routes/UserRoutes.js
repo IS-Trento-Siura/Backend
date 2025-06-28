@@ -8,13 +8,9 @@ const router = express.Router();
 
 router.post("", register);
 router.post("/session", login);
-router.post("/logout", authMiddleware, logout); // Just to try postman
+router.post("/logout", authMiddleware, logout); 
 router.delete("/:id", authMiddleware, deleteUser);
-router.put("/:id", authMiddleware, editUser); // put o patch?
+router.put("/:id", authMiddleware, editUser);
 
-
-router.get("/protected", authMiddleware, (req, res) => { //Just to test auth
-    res.status(200).json({ message: `Welcome, ${req.user.username}` });
-  });
 
 export default router;
