@@ -53,13 +53,44 @@ describe('Report API', () => {
       .set('Cookie', [`token=${token}`])
       .send({
         reportData: {
-          title: 'Test Report',        // Changed from 'titolo'
-          description: 'Description here', // Changed from 'descrizione'
+          title: 'Test Report',        
+          description: 'Description here', 
         }
       });
     expect(res.statusCode).toBe(201);
     expect(res.body).toHaveProperty('message', 'Report created successfully');
     expect(res.body).toHaveProperty('report');
+  });
+
+  it('should fail when title is missing', async () => {
+    const res = await request(app)
+      .post('/api/reports')
+      .set('Cookie', [`token=${token}`])
+      .send({
+        reportData: {
+          description: 'Description here', 
+        }
+      });
+    expect(res.statusCode).toBe(500);
+    expect(res.body).toHaveProperty('error');
+  });
+
+  it('should fail when coordinates are invalid', async () => {
+    const res = await request(app)
+      .post('/api/reports')
+      .set('Cookie', [`token=${token}`])
+      .send({
+        reportData: {
+          title: 'Test Report',        
+          description: 'Description here',
+          location: {
+          lat: 'invalid',
+          lng: null       
+        }
+        }
+      });
+    expect(res.statusCode).toBe(500);
+    expect(res.body).toHaveProperty('error');
   });
 
   it('should get all reports (empty)', async () => {

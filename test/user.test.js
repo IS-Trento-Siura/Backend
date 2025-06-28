@@ -40,11 +40,19 @@ describe('User API', () => {
       expect(res.body.message).toMatch(/already exists/i);
     });
 
+    it('should fail with no email', async () => {
+      const res = await request(app).post('/api/users').send({
+        username: 'newuser',
+        password: 'Password1'
+      });
+      expect(res.statusCode).toBe(500);
+    });
+
     it('should fail with weak password', async () => {
       const res = await request(app).post('/api/users').send({
         email: 'new@example.com',
         username: 'weakpass',
-        password: 'weak'
+        password: 'ciao00'
       });
       expect(res.statusCode).toBe(400);
     });
