@@ -7,7 +7,8 @@ import dotenv from 'dotenv';
 import cookieParser from 'cookie-parser';
 import cors from 'cors';
 
-
+import swaggerUi from 'swagger-ui-express';
+import YAML from 'yamljs';
 
 dotenv.config();
 
@@ -24,6 +25,10 @@ app.use(cors({
 }));
 
 mongoConnect();
+
+const swaggerDocument = YAML.load('./api-docs.yaml');
+app.use('/api-docs', swaggerUi.serve, swaggerUi.setup(swaggerDocument));
+
 
 app.use("/api/users", usersRoutes);
 app.use("/api/reports", reportsRoutes);
