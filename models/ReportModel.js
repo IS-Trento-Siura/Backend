@@ -7,7 +7,7 @@ const ReportSchema = new mongoose.Schema({
     user: { type: mongoose.Schema.Types.ObjectId, ref: 'User', required: true },
     location: { lat: { type: Number, required: false }, lng: { type: Number, required: false} },
     photo: { type: String, required: false },
-    tags: { type: [String], required: false },
+    tags: { type: String, required: false },
 }, {
     timestamps: true,
 });

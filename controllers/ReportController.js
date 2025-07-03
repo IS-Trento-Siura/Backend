@@ -6,7 +6,7 @@ import Org from '../models/OrgModel.js';
 export const createReport = async (req, res) => {
   try {
     const { reportData } = req.body;
-    const { id: userId, role } = req.user;
+    const { _id: userId, role } = req.user;
 
     const newReport = new Report({ user: userId, ...reportData });
     await newReport.save();
@@ -95,7 +95,7 @@ export const updateReport = async (req, res) => {
 
 export const getUserReports = async (req, res) => {
   try {
-    const userId = req.user.id;
+    const userId = req.user._id;
 
     const reports = await Report.find({ user: userId });
     if (!reports) {
