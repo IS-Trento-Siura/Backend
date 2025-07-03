@@ -90,7 +90,7 @@ export const deleteUser = async (req, res) => {
   }
 };
 
-export const editUser = async (req, res) => { //come passo i parametri? prendo diretto da cookie o come parte della richiesta?
+export const editUser = async (req, res) => { 
   try {
     const { id } = req.params;  
     const loggedInUserId = req.user._id.toString();
