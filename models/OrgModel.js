@@ -8,7 +8,8 @@ const OrgSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     phone: { type: Number, required: true, unique: true },
-    indirizzo: { type: String, required: true }, 
+    indirizzo: { type: String, required: true },
+    descrizione: { type: String, required: true }, // Nuovo campo per descrivere l'ente
     segnalazioni: [{ type: mongoose.Schema.Types.ObjectId, ref: "Report", default: [] }], 
 }, {
     timestamps: true,
@@ -31,7 +32,12 @@ OrgSchema.methods.comparePassword = async function (candidatePassword) {
 
 
 OrgSchema.methods.generateAuthToken = function () {
-    const payload = { _id: this._id, email: this.email, username: this.username, role: 'org' };
+    const payload = { 
+        _id: this._id, 
+        email: this.email, 
+        username: this.username, 
+        accountType: 'org' // Cambia da 'role' a 'accountType'
+    };
   
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h'});
   

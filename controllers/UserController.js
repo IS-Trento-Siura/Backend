@@ -1,5 +1,5 @@
 import User from '../models/UserModel.js';
-// import Report from '../models/ReportModel.js';
+import Report from '../models/ReportModel.js'; // Decommenta questa riga
 
 export const register = async (req, res) => {
     try {
@@ -82,10 +82,15 @@ export const deleteUser = async (req, res) => {
       return res.status(404).json({ message: 'User not found' });
     }
 
+    // Elimina prima tutte le segnalazioni dell'utente
+    await Report.deleteMany({ user: id });
+    
+    // Poi elimina l'utente
     await User.findByIdAndDelete(id);  
 
     return res.status(200).json({ message: 'User deleted successfully' });
   } catch (error) {
+    console.error('Delete user error:', error);
     return res.status(500).json({ message: 'Server error', error });
   }
 };
