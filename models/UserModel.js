@@ -9,7 +9,8 @@ const UserSchema = new mongoose.Schema({
     email: { type: String, required: true, unique: true },
     password: { type: String, required: true },
     phone: { type: Number, required: false },
-    posizione: { type: Boolean, required: false, default: false }, 
+    posizione: { type: Boolean, required: false, default: false },
+    status: { type: String, enum: ['active', 'suspended'], default: 'active' }, // Nuovo campo
     segnalazioni: [{ type: mongoose.Schema.Types.ObjectId, ref: "Report", default: [] }], 
 }, {
     timestamps: true,
@@ -33,7 +34,7 @@ UserSchema.methods.comparePassword = async function (candidatePassword) {
 
 
 UserSchema.methods.generateAuthToken = function () {
-    const payload = { _id: this._id, email: this.email, username: this.username, role: 'user' };
+    const payload = { _id: this._id, email: this.email, username: this.username, accountType: 'user' };
   
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h'});
   

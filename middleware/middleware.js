@@ -1,7 +1,15 @@
 import jwt from 'jsonwebtoken';
 
 export const authMiddleware = (req, res, next) => {
-  const token = req.cookies.token;
+  let token = req.cookies.token;
+
+  // Se non c'è token nei cookies, controlla l'header Authorization
+  if (!token) {
+    const authHeader = req.headers.authorization;
+    if (authHeader && authHeader.startsWith('Bearer ')) {
+      token = authHeader.substring(7, authHeader.length);
+    }
+  }
 
   if (!token) {
     return res.status(401).json({ message: 'No token provided' });
@@ -9,12 +17,11 @@ export const authMiddleware = (req, res, next) => {
 
   try {
     const decoded = jwt.verify(token, process.env.JWT_SECRET);
-    // req.user = decoded; 
     req.user = {
       _id: decoded._id,
       email: decoded.email,
       username: decoded.username,
-      role: decoded.role,
+      accountType: decoded.accountType
     };
     next();
   } catch (err) {
@@ -22,10 +29,9 @@ export const authMiddleware = (req, res, next) => {
   }
 };
 
-
 export const requireOrg = (req, res, next) => {
-  if (req.user?.role !== 'org') { //checks for org types?
-    return res.status(403).json({ error: 'Access denied: admin only' });
+  if (req.user?.accountType !== 'org') {
+    return res.status(403).json({ error: 'Access denied: organization only' });
   }
   next();
 };

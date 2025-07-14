@@ -20,8 +20,11 @@ app.use(cookieParser());
 
 
 app.use(cors({
-  origin: 'http://localhost:8080', // allow your frontend
-  credentials: true // if you're using cookies or auth headers
+  origin: [
+    'http://localhost:8080', // per sviluppo locale
+    'https://frontend-qn31.onrender.com' // sostituisci con il dominio del tuo frontend
+  ],
+  credentials: true
 }));
 
 mongoConnect();
