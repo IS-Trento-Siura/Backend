@@ -9,7 +9,7 @@ const OrgSchema = new mongoose.Schema({
     password: { type: String, required: true },
     phone: { type: Number, required: true, unique: true },
     indirizzo: { type: String, required: true },
-    descrizione: { type: String, required: true }, // Nuovo campo per descrivere l'ente
+    descrizione: { type: String, required: true }, 
     segnalazioni: [{ type: mongoose.Schema.Types.ObjectId, ref: "Report", default: [] }], 
 }, {
     timestamps: true,
@@ -36,7 +36,7 @@ OrgSchema.methods.generateAuthToken = function () {
         _id: this._id, 
         email: this.email, 
         username: this.username, 
-        accountType: 'org' // Cambia da 'role' a 'accountType'
+        accountType: 'org' 
     };
   
     const token = jwt.sign(payload, process.env.JWT_SECRET, { expiresIn: '1h'});

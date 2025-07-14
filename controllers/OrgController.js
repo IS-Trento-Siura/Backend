@@ -65,7 +65,7 @@ export const login = async (req, res) => {
 
 export const getAllUsers = async (req, res) => {
   try {
-    const users = await User.find({}, '-password'); // Exclude password field
+    const users = await User.find({}, '-password'); // Esclude la password
 
     return res.status(200).json({ users });
   } catch (error) {

@@ -1,5 +1,5 @@
 import User from '../models/UserModel.js';
-import Report from '../models/ReportModel.js'; // Decommenta questa riga
+import Report from '../models/ReportModel.js';
 
 export const register = async (req, res) => {
     try {

@@ -66,9 +66,9 @@ export const getAllReports = async (req, res) => {
     // Ottieni tutti i report senza filtrare per tipo di account
     const reports = await Report.find({});
     
-    if (!reports || reports.length === 0) {
-      return res.status(404).json({ message: 'No reports found' });
-    }
+    // if (!reports || reports.length === 0) {
+    //   return res.status(404).json({ message: 'No reports found' });
+    // }
 
     // Per ogni report, determina se è di un utente o organizzazione
     const reportsWithAccountInfo = await Promise.all(

@@ -363,6 +363,182 @@ paths:
           description: Invalid credentials
         500:
           description: Server error
+          
+  /orgs/{id}:
+    put:
+      tags:
+        - Organizations
+      summary: Edit an organization
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Organization ID (must match logged-in org)
+      requestBody:
+        content:
+          application/json:
+            schema:
+              type: object
+              properties:
+                email:
+                  type: string
+                  format: email
+                username:
+                  type: string
+                password:
+                  type: string
+                  minLength: 6
+                  pattern: "^(?=.*[a-z])(?=.*[A-Z])(?=.*\\d)[a-zA-Z\\d]{6,}$"
+                phone:
+                  type: string
+                indirizzo:
+                  type: string
+                descrizione:
+                  type: string
+      responses:
+        200:
+          description: Organization updated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User updated successfully"
+                  organization:
+                    $ref: '#/components/schemas/Organization'
+        403:
+          description: Unauthorized - cannot edit another organization
+        404:
+          description: Organization not found
+        500:
+          description: Server error
+
+    delete:
+      tags:
+        - Organizations
+      summary: Delete an organization
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: id
+          required: true
+          schema:
+            type: string
+          description: Organization ID (must match logged-in org)
+      responses:
+        200:
+          description: Organization deleted successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "Organization deleted successfully"
+        403:
+          description: Unauthorized - cannot delete another organization
+        404:
+          description: Organization not found
+        500:
+          description: Server error
+
+  /orgs/users/{userId}:
+    delete:
+      tags:
+        - Organizations
+      summary: Delete a user by organization
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: User ID to delete
+      responses:
+        200:
+          description: User deleted successfully (and reports removed)
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User deleted successfully"
+        404:
+          description: User not found
+        500:
+          description: Server error
+
+  /orgs/users/{userId}/suspend:
+    post:
+      tags:
+        - Organizations
+      summary: Suspend a user
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: User ID to suspend
+      responses:
+        200:
+          description: User suspended successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User suspended successfully"
+        404:
+          description: User not found
+        500:
+          description: Server error
+
+  /orgs/users/{userId}/reactivate:
+    post:
+      tags:
+        - Organizations
+      summary: Reactivate a suspended user
+      security:
+        - cookieAuth: []
+      parameters:
+        - in: path
+          name: userId
+          required: true
+          schema:
+            type: string
+          description: User ID to reactivate
+      responses:
+        200:
+          description: User reactivated successfully
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  message:
+                    type: string
+                    example: "User reactivated successfully"
+        404:
+          description: User not found
+        500:
+          description: Server error
 
   # Report Routes
   /reports:

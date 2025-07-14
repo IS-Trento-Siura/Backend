@@ -25,7 +25,8 @@ describe('Organization API', () => {
         username: 'org1',
         password: 'Password1',
         phone: '1234567890',
-        indirizzo: 'Some address'
+        indirizzo: 'Some address',
+        descrizione: 'Descrizione ente'
       });
       expect(res.statusCode).toBe(201);
     });
@@ -36,7 +37,8 @@ describe('Organization API', () => {
         username: 'org1',
         password: 'Password1',
         phone: '1234567890',
-        indirizzo: 'Some address'
+        indirizzo: 'Some address',
+        descrizione: 'Descrizione ente'
       });
 
       const res = await request(app).post('/api/orgs').send({
@@ -44,7 +46,8 @@ describe('Organization API', () => {
         username: 'org1',
         password: 'Password1',
         phone: '999999999',
-        indirizzo: 'New address'
+        indirizzo: 'New address',
+        descrizione: 'Descrizione ente'
       });
       expect(res.statusCode).toBe(400);
     });
@@ -55,20 +58,22 @@ describe('Organization API', () => {
         username: 'org2',
         password: '123',
         phone: '1234567890',
-        indirizzo: 'Another address'
+        indirizzo: 'Another address',
+        descrizione: 'Descrizione ente'
       });
       expect(res.statusCode).toBe(400);
     });
   });
 
-  describe('POST /api/org/session', () => {
+  describe('POST /api/orgs/session', () => {
     beforeEach(async () => {
       await request(app).post('/api/orgs').send({
         email: 'org@login.com',
         username: 'orglogin',
         password: 'Password1',
         phone: '0000000000',
-        indirizzo: 'HQ'
+        indirizzo: 'HQ',
+        descrizione: 'Descrizione ente'
       });
     });
 

@@ -10,7 +10,7 @@ const UserSchema = new mongoose.Schema({
     password: { type: String, required: true },
     phone: { type: Number, required: false },
     posizione: { type: Boolean, required: false, default: false },
-    status: { type: String, enum: ['active', 'suspended'], default: 'active' }, // Nuovo campo
+    status: { type: String, enum: ['active', 'suspended'], default: 'active' }, 
     segnalazioni: [{ type: mongoose.Schema.Types.ObjectId, ref: "Report", default: [] }], 
 }, {
     timestamps: true,
