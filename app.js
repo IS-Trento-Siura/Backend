@@ -22,7 +22,7 @@ app.use(cookieParser());
 app.use(cors({
   origin: [
     'http://localhost:8080', // per sviluppo locale
-    'https://frontend-t02s.onrender.com' // per deploy su render
+    'https://frontend-qn31.onrender.com' // per deploy su render
   ],
   credentials: true
 }));
